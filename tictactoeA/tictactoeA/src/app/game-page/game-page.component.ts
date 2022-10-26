@@ -12,11 +12,7 @@ export class GamePageComponent implements OnInit {
   id = '';
   playerName = '';
   turnImage = '';
-  playerXName: string = "";
-  playerOName: string = "";
-  selectXAvatar = "";
-  selectOAvatar = "";
-  imageX = "assets/img/imageX.png";
+   imageX = "assets/img/imageX.png";
   imageO = "assets/img/imageO.png";
   win = false;
   playerXScore = 0;
@@ -24,6 +20,7 @@ export class GamePageComponent implements OnInit {
   xWin: any = [];
   oWin: any = [];
   draw = 0;
+  playerObject = this.shared.getData();
 
   winningCombination = [
     ['0', '1', '2'],
@@ -45,37 +42,32 @@ export class GamePageComponent implements OnInit {
 
 
   ngOnInit(): void {
-
-    let data = this.shared.getData();
-    this.playerXName = data[0]
-    this.playerOName = data[1]
-    this.selectOAvatar = data[3];
-    this.selectXAvatar = data[2]
-    this.playerName = this.playerXName;
+    this.playerName = this.playerObject['playerXName'];
     this.turnImage = this.imageX;
 
   }
 
   toClick(event: Event) {
-    const divID = (event.target as HTMLDivElement).id;
+    const ID = (event.target as HTMLDivElement).id;
+    var divBlock =document.getElementById(ID) as HTMLDivElement;
 
-    if (this.flag == true && (document.getElementById(divID) as HTMLDivElement).innerHTML == "") {
-      this.playerName = this.playerOName;
+    if (this.flag == true && divBlock.innerHTML == "") {
+      this.playerName = this.playerObject['playerOName'];
       this.turnImage = this.imageO;
-      (document.getElementById(divID) as HTMLDivElement).innerHTML = "<img src='assets/img/imageX.png' width='80px' height='80px'>"
-      this.xWin[divID] = 1;
-      this.toget(this.flag)
-
+      divBlock.innerHTML = "<img src='assets/img/imageX.png' width='80px' height='80px'>"
+      this.xWin[ID] = 1;
+      
 
     }
-    else if (this.flag == false && document.getElementById(divID)?.innerHTML == "") {
-      this.playerName = this.playerXName;
+    else if (this.flag == false && divBlock.innerHTML == "" ){
+      this.playerName =  this.playerObject['playerXName'];
       this.turnImage = this.imageX;
-      (document.getElementById(divID) as HTMLDivElement).innerHTML = "<img src='assets/img/imageO.png' width='80px' height='80px'>";
-      this.oWin[divID] = 1;
-      this.toget(this.flag)
+      divBlock.innerHTML= "<img src='assets/img/imageO.png' width='80px' height='80px'>";
+      this.oWin[ID] = 1;
+   
 
     }
+    this.playerTurn(this.flag)
 
   }
   check() {
@@ -83,7 +75,7 @@ export class GamePageComponent implements OnInit {
 
       if (this.xWin[this.winningCombination[i][0]] > -1 && this.xWin[this.winningCombination[i][1]] > -1 && this.xWin[this.winningCombination[i][2]]) {
         this.toGetStrike(i);
-        this.playerName = this.playerXName
+        this.playerName =this.playerObject['playerXName'];
         this.openModal()
         this.playerXScore += 1;
 
@@ -91,7 +83,7 @@ export class GamePageComponent implements OnInit {
       }
       if (this.oWin[this.winningCombination[i][0]] > -1 && this.oWin[this.winningCombination[i][1]] > -1 && this.oWin[this.winningCombination[i][2]]) {
         this.toGetStrike(i);
-        this.playerName = this.playerOName
+        this.playerName = this.playerObject['playerOName'];
         this.openModal()
         this.playerOScore += 1;
 
@@ -116,7 +108,7 @@ export class GamePageComponent implements OnInit {
     this.win = true;
 
   }
-  toget(flag: any,) {
+  playerTurn(flag: any,) {
     this.flag = !flag;
     this.draw += 1;
     this.check();
@@ -133,7 +125,7 @@ export class GamePageComponent implements OnInit {
     this.draw = 0;
     this.flag = true;
     this.win = false
-    this.playerName = this.playerXName;
+    this.playerName = this.playerObject['playerXName'];
     this.turnImage = this.imageX;
 
   }
